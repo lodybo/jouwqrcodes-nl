@@ -1,0 +1,14 @@
+name: jouwqrcode_nl-backend
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: jouwqrcode_nl-postgres-db
+    environment:
+      POSTGRES_USER: jouwqrcode_nl
+      POSTGRES_PASSWORD: jouwqrcode_nl
+      POSTGRES_DB: jouwqrcode_nl
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
