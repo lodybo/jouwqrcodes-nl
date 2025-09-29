@@ -12,9 +12,7 @@ class QrCreateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'qr:create
-                            { url: Th destination url }
-                            { title?: The title of the QR code }';
+    protected $signature = 'qr:create {url} {title?}';
 
     /**
      * The console command description.
@@ -31,13 +29,14 @@ class QrCreateCommand extends Command
         $url = $this->argument('url');
         $title = $this->argument('title');
 
+        // TODO: Move this validation to a FormRequest or a dedicated service
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             $this->error('Invalid URL provided.');
             return self::FAILURE;
         }
 
         $qr = QrCode::create([
-            'short_code' => QrCode::generateUniqueShortCode(),
+            'shortcode' => QrCode::generateUniqueShortCode(),
             'destination_url' => $url,
             'title' => $title ?? 'Untitled QR Code',
         ]);

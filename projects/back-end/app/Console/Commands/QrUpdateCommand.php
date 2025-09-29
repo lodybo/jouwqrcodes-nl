@@ -7,10 +7,7 @@ use Illuminate\Console\Command;
 
 class QrUpdateCommand extends Command
 {
-    protected $signature = 'qr:update
-                            {shortCode : The short code of the QR to update}
-                            {--url= : New destination URL}
-                            {--title= : New title}';
+    protected $signature = 'qr:update {shortCode : The short code of the QR to update} {--url= : New destination URL} {--title= : New title}';
 
     protected $description = 'Update an existing QR code';
 

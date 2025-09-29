@@ -25,7 +25,7 @@ class QrCode extends Model
         do {
             // Generate 8-character base62 string (a-z, A-Z, 0-9)
             $shortCode = Str::random(8);
-        } while (self::where('short_code', $shortCode)->exists());
+        } while (self::where('shortcode', $shortCode)->exists());
 
         return $shortCode;
     }
@@ -35,7 +35,7 @@ class QrCode extends Model
      */
     public static function findByShortCode(string $shortCode): ?self
     {
-        return self::where('short_code', $shortCode)->first();
+        return self::where('shortcode', $shortCode)->first();
     }
 
     /**
@@ -43,6 +43,6 @@ class QrCode extends Model
      */
     public function getFullUrlAttribute(): string
     {
-        return config('app.url') . '/' . $this->short_code;
+        return config('app.url') . '/' . $this->shortcode;
     }
 }

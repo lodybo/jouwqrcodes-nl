@@ -23,7 +23,7 @@ class QrListCommand extends Command
         $this->table(
             ['Short Code', 'Title', 'Destination URL', 'Created At'],
             $qrCodes->map(fn($qr) => [
-                $qr->short_code,
+                $qr->shortcode,
                 $qr->title ?? '-',
                 strlen($qr->destination_url) > 50
                     ? substr($qr->destination_url, 0, 47) . '...'
