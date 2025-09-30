@@ -19,7 +19,7 @@ Route::get('/{shortcode}', function (QrCodeService $qrCodeService, string $short
     return redirect($qrCode->destination_url, 302);
 })->middleware('throttle:60,1');
 
-Route::get('/{shortcode}/image', function (QrCodeService $qrCodeService, string $shortcode) {
+Route::get('/qr/{shortcode}/image', function (QrCodeService $qrCodeService, string $shortcode) {
     $qrCode = $qrCodeService->findByShortCode($shortcode);
 
     if (!$qrCode) {
@@ -36,7 +36,7 @@ Route::get('/{shortcode}/image', function (QrCodeService $qrCodeService, string 
     ]);
 });
 
-Route::get('/{shortcode}/image/download', function (QrCodeService $qrCodeService, string $shortcode) {
+Route::get('/qr/{shortcode}/image/download', function (QrCodeService $qrCodeService, string $shortcode) {
     $qrCode = $qrCodeService->findByShortCode($shortcode);
 
     if (!$qrCode) {

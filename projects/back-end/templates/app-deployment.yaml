@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.app.namespace }}
+  labels: {{ toYaml .Values.app.labels | nindent 4 }}
+    environment: {{ .Values.environment }}
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+      component: app
+  template:
+    metadata:
+      labels: {{ toYaml .Values.app.labels | nindent 8 }}
+        environment: {{ .Values.environment }}
+        component: app
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          command: [ 'sh', '-c' ]
+          args:
+            - |
+              echo "Running migrations..."
+              php artisan migrate --force
+              echo "Starting application..."
+              /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: APP_NAME
+              value: "JouwQR"
+            - name: APP_ENV
+              value: {{ .Values.environment }}
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.name }}-secret
+                  key: appKey
+            - name: APP_DEBUG
+              value: {{ if eq .Values.environment "development" }}"true"{{ else }}"false"{{ end }}
+            - name: APP_URL
+              value: {{ if eq .Values.environment "production" }}https://{{ .Values.app.domains.production }}{{ else }}https://{{ .Values.app.domains.development }}{{ end }}
+            - name: DB_CONNECTION
+              value: pgsql
+            - name: DB_HOST
+              value: {{ .Values.app.name }}-postgres-service
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: {{ .Values.postgres.database }}
+            - name: DB_USERNAME
+              value: {{ .Values.postgres.username }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.name }}-postgres-secret
+                  key: password
+            - name: LOG_CHANNEL
+              value: stdout
+            - name: SESSION_DRIVER
+              value: database
+            - name: CACHE_STORE
+              value: database
+            - name: QUEUE_CONNECTION
+              value: database
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
