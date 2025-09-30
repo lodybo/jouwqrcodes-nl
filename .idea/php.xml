@@ -131,6 +131,9 @@
       <path value="$PROJECT_DIR$/projects/back-end/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/tijsverkoyen/css-to-inline-styles" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/composer" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/dasprid/enum" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/bacon/bacon-qr-code" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/endroid/qr-code" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />

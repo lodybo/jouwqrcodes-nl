@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\QrCode;
+use App\Models\QrCodeModel;
 use App\Services\QrCodeService;
 use Illuminate\Support\Facades\Route;
 
@@ -8,8 +8,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/{shortcode}', function (string $shortcode) {
-    $qrCode = QrCodeService::findByShortCode($shortcode);
+Route::get('/{shortcode}', function (QrCodeService $qrCodeService, string $shortcode) {
+    $qrCode = $qrCodeService->findByShortCode($shortcode);
 
     if (!$qrCode) {
         abort(404, 'QR code not found');

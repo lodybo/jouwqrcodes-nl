@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\QrCode;
+use App\Models\QrCodeModel;
 use App\Services\QrCodeService;
 use Illuminate\Console\Command;
 
@@ -25,27 +25,17 @@ class QrCreateCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(QrCodeService $qrCodeService): int
     {
         $url = $this->argument('url');
         $title = $this->argument('title');
 
-        // TODO: Move this validation to a FormRequest or a dedicated service
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $this->error('Invalid URL provided.');
-            return self::FAILURE;
-        }
-
-        $qr = QrCode::create([
-            'shortcode' => QrCodeService::generateUniqueShortCode(),
-            'destination_url' => $url,
-            'title' => $title ?? 'Untitled QR Code',
-        ]);
+        $qr = $qrCodeService->createCode($url, $title);
 
         $this->info('QR Code created successfully!');
         $this->newLine();
-        $this->line("Short Code: {$qr->short_code}");
-        $this->line("Full URL: {$qr->full_url}");
+        $this->line("Short Code: {$qr->shortcode}");
+        $this->line("Full URL: {$qrCodeService->getFullUrl($qr)}");
         $this->line("Destination: {$qr->destination_url}");
         if ($qr->title) {
             $this->line("Title: {$qr->title}");

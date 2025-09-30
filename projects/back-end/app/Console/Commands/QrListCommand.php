@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\QrCode;
+use App\Models\QrCodeModel;
 use Illuminate\Console\Command;
 
 class QrListCommand extends Command
@@ -13,7 +13,7 @@ class QrListCommand extends Command
 
     public function handle(): int
     {
-        $qrCodes = QrCode::orderBy('created_at', 'desc')->get();
+        $qrCodes = QrCodeModel::orderBy('created_at', 'desc')->get();
 
         if ($qrCodes->isEmpty()) {
             $this->info('No QR codes found');

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\QrCode;
+use App\Models\QrCodeModel;
 use App\Services\QrCodeService;
 use Illuminate\Console\Command;
 
@@ -12,10 +12,10 @@ class QrUpdateCommand extends Command
 
     protected $description = 'Update an existing QR code';
 
-    public function handle(): int
+    public function handle(QrCodeService $qrCodeService): int
     {
         $shortCode = $this->argument('shortCode');
-        $qr = QrCodeService::findByShortCode($shortCode);
+        $qr = $qrCodeService->findByShortCode($shortCode);
 
         if (!$qr) {
             $this->error("QR code '{$shortCode}' not found");
