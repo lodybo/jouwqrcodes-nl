@@ -10,7 +10,7 @@ use InvalidArgumentException;
 class QrCodeService
 {
 
-    public function __construct(private QrCodeImageGenerationService $qrGenService)
+    public function __construct(private readonly QrCodeImageGenerationService $qrGenService)
     {
         //
     }
@@ -28,7 +28,9 @@ class QrCodeService
             'title' => $title ?? 'Untitled QR Code',
         ]);
 
-        $result = $this->qrGenService->generateImage($qr);
+        $full_url = $this->getFullUrl($qr);
+
+        $result = $this->qrGenService->generateImage($full_url);
         $filePath = $this->qrGenService->saveImage($result, $qr->shortcode);
         Log::info("QR code image saved to: {$filePath}");
 
@@ -48,11 +50,6 @@ class QrCodeService
                 throw new InvalidArgumentException('Invalid URL provided.');
             }
             $qrCode->destination_url = $url;
-
-            // Regenerate QR code image
-            $result = $this->qrGenService->generateImage($qrCode);
-            $filePath = $this->qrGenService->saveImage($result, $qrCode->shortcode);
-            Log::info("QR code image updated at: {$filePath}");
         }
 
         if ($title) {

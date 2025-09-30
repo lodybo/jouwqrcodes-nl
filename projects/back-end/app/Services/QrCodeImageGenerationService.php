@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Storage;
 
 class QrCodeImageGenerationService
 {
-    public static function generateImage(QrCodeModel $data): ResultInterface
+    public static function generateImage(string $full_url): ResultInterface
     {
         $writer = new WebPWriter();
 
         $qrcode = new QrCode(
-            data: $data->destination_url,
+            data: $full_url,
             size: 300,
             margin: 10,
             roundBlockSizeMode: RoundBlockSizeMode::Margin,
