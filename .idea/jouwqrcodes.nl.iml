@@ -2,7 +2,9 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/projects/back-end/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/projects/back-end/postgres_data" />
+      <excludeFolder url="file://$MODULE_DIR$/projects/back-end/vendor" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

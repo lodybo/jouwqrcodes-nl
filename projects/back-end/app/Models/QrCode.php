@@ -16,33 +16,4 @@ class QrCode extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    /**
-     * Generate a unique short code
-     */
-    public static function generateUniqueShortCode(): string
-    {
-        do {
-            // Generate 8-character base62 string (a-z, A-Z, 0-9)
-            $shortCode = Str::random(8);
-        } while (self::where('shortcode', $shortCode)->exists());
-
-        return $shortCode;
-    }
-
-    /**
-     * Find QR code by short code
-     */
-    public static function findByShortCode(string $shortCode): ?self
-    {
-        return self::where('shortcode', $shortCode)->first();
-    }
-
-    /**
-     * Get the full QR URL
-     */
-    public function getFullUrlAttribute(): string
-    {
-        return config('app.url') . '/' . $this->shortcode;
-    }
 }

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\QrCode;
+use App\Services\QrCodeService;
 use Illuminate\Console\Command;
 
 class QrCreateCommand extends Command
@@ -36,7 +37,7 @@ class QrCreateCommand extends Command
         }
 
         $qr = QrCode::create([
-            'shortcode' => QrCode::generateUniqueShortCode(),
+            'shortcode' => QrCodeService::generateUniqueShortCode(),
             'destination_url' => $url,
             'title' => $title ?? 'Untitled QR Code',
         ]);
