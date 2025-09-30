@@ -24,25 +24,25 @@ echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 docker push ghcr.io/lodybo/jouwqrcodes-backend:latest
 ```
 
-### 2. Configure Values
-
-Edit `values.yaml` and update:
-- `secrets.appKey` - Generate with `php artisan key:generate --show`
-- `postgres.password` - Strong database password
-- `app.domains` - Your domain names
-- `ipWhitelist.middleware.sourceRange` - Your allowed IP ranges
-
-### 3. Deploy to Kubernetes
+### 2. Deploy to Kubernetes
 
 ```bash
 # Install the chart
 helm install jouwqrcodes-backend ./helm \
   --namespace jouwqrcodes \
-  --create-namespace
+  --create-namespace \
+  --set chart.version=0.1.0 \
+  --set postgres.password=yourpassword \
+  --set environment=production \
+  --set secrets.appKey=base64:yourbase64key \ 
 
 # Or upgrade if already installed
 helm upgrade jouwqrcodes-backend ./helm \
-  --namespace jouwqrcodes
+  --namespace jouwqrcodes \
+  --set chart.version=0.1.0 \
+  --set postgres.password=yourpassword \
+  --set environment=production \
+  --set secrets.appKey=base64:yourbase64key
 ```
 
 ### 4. Check Status
