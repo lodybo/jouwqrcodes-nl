@@ -1,14 +1,14 @@
 app:
-  name: jouwqrcodes_nl-backend
-  namespace: jouwqrcodes_nl
+  name: jouwqrcodes-nl-backend
+  namespace: jouwqrcodes-nl
   labels:
-    app: jouwqrcodes_nl-backend
-    release: jouwqrcodes_nl-backend
+    app: jouwqrcodes-nl-backend
+    release: jouwqrcodes-nl-backend
     managed-by: helm
   selectorLabels:
-    app: jouwqrcodes_nl-backend
+    app: jouwqrcodes-nl-backend
   image:
-    repository: ghcr.io/lodybo/jouwqrcodes_nl-backend
+    repository: ghcr.io/lodybo/jouwqrcodes-nl-backend
     tag: latest
     pullPolicy: Always
   domains:
@@ -27,13 +27,13 @@ resources:
     memory: 512Mi
 
 service:
-  name: jouwqrcodes_nl-backend-service
+  name: jouwqrcodes-nl-backend-service
   port: 80
   targetPort: 80
 
 postgres:
-  database: jouwqrcodes_nl-db
-  username: jouwqrcodes_nl-user
+  database: jouwqrcodes-nl-db
+  username: jouwqrcodes-nl-user
   password: "<PLACEHOLDER>"
   storage:
     size: 5Gi
@@ -43,7 +43,7 @@ secrets:
 
 ipWhitelist:
   middleware:
-    name: jouwqrcodes_nl-ip-whitelist
+    name: jouwqrcodes-nl-ip-whitelist
     sourceRange:
       - "10.0.0.0/8"      # Internal network
       - "192.168.0.0/16"  # Private network

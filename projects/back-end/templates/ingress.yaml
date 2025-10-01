@@ -30,8 +30,8 @@ metadata:
   labels: {{ toYaml .Values.app.labels | nindent 4 }}
 spec:
   redirectRegex:
-    regex: "^(http|https)://(www\\.)?{{ .Values.app.domains.production | replace "." "\\." }}(.*)"
-    replacement: "https://{{ .Values.app.domains.redirect }}$3"
+    regex: "^https?://{{ .Values.app.domains.redirect }}(.*)"
+    replacement: "https://{{ .Values.app.domains.production }}$1"
     permanent: true
 ---
 apiVersion: networking.k8s.io/v1
