@@ -34,7 +34,7 @@ helm install jouwqrcodes-backend ./helm \
   --set chart.version=0.1.0 \
   --set postgres.password=yourpassword \
   --set environment=production \
-  --set secrets.appKey=base64:yourbase64key \ 
+  --set secrets.appKey=base64:yourbase64key 
 
 # Or upgrade if already installed
 helm upgrade jouwqrcodes-backend ./helm \

@@ -12,8 +12,9 @@ app:
     tag: latest
     pullPolicy: Always
   domains:
-    production: qr.lodybo.nl
-    development: qr.dev.lodybo.nl
+    production: jouwqrcode.nl
+    development: dev.jouwqrcode.nl
+    redirect: jouwqr.nl
 
 environment: development # or: production
 
@@ -31,8 +32,8 @@ service:
   targetPort: 80
 
 postgres:
-  database: jouwqrcodes_nl
-  username: jouwqrcodes_nl
+  database: jouwqrcodes_nl-db
+  username: jouwqrcodes_nl-user
   password: "<PLACEHOLDER>"
   storage:
     size: 5Gi
