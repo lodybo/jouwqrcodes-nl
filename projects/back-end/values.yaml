@@ -8,7 +8,7 @@ app:
   selectorLabels:
     app: jouwqrcodes-nl-backend
   image:
-    repository: ghcr.io/lodybo/jouwqrcodes-nl-backend
+    repository: ghcr.io/lodybo/jouwqrcodes-backend
     tag: latest
     pullPolicy: Always
   domains:
