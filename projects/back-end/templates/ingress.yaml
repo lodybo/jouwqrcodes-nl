@@ -16,7 +16,7 @@ metadata:
   namespace: {{ .Values.app.namespace }}
   labels: {{ toYaml .Values.app.labels | nindent 4 }}
 spec:
-  ipWhiteList:
+  ipAllowList:
     sourceRange:
 {{- range .Values.ipWhitelist.middleware.sourceRange }}
       - {{ . }}
@@ -50,6 +50,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-https-redirect@kubernetescrd
+    traefik.ingress.kubernetes.io/router.priority: "1"
     cert-manager.io/cluster-issuer: letsencrypt-http-issuer
 spec:
   rules:
@@ -103,6 +104,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-https-redirect@kubernetescrd,{{ .Values.app.namespace }}-{{ .Values.ipWhitelist.middleware.name }}@kubernetescrd
+    traefik.ingress.kubernetes.io/router.priority: "10"
     cert-manager.io/cluster-issuer: letsencrypt-http-issuer
 spec:
   rules:
@@ -150,7 +152,7 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.app.domains.redirect }}
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-host-redirect@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-https-redirect@kubernetescrd,{{ .Values.app.namespace }}-{{ .Values.app.name }}-host-redirect@kubernetescrd
     cert-manager.io/cluster-issuer: letsencrypt-http-issuer
 spec:
   rules:
