@@ -30,6 +30,10 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+# Verify files exist
+RUN ls -la /var/www/html/public/
+RUN test -f /var/www/html/public/index.php || (echo "index.php missing!" && exit 1)
+
 # Install dependencies (skip dev dependencies in production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 

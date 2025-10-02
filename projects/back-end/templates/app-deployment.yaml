@@ -27,6 +27,9 @@ spec:
           command: [ 'sh', '-c' ]
           args:
             - |
+              echo "Verify files exist"
+              ls -la /var/www/html/public/
+              test -f /var/www/html/public/index.php || (echo "index.php missing!" && exit 1)
               echo "Running migrations..."
               php artisan migrate --force
               echo "Starting application..."
