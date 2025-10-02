@@ -89,6 +89,6 @@ class QrCodeService
      */
     public function getFullUrl(QrCodeModel $qrCode): string
     {
-        return url("/{$qrCode->shortcode}");
+        return secure_url("/{$qrCode->shortcode}");
     }
 }
