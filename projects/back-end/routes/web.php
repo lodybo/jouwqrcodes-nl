@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\QrCodeModel;
+use App\Services\QrCodeImageGenerationService;
 use App\Services\QrCodeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,14 +26,12 @@ Route::get('/qr/{shortcode}/image', function (QrCodeService $qrCodeService, stri
         abort(404, 'QR code not found');
     }
 
-    if(Storage::disk('public')->missing('qr-codes/' . $qrCode->shortcode . '.webp')) {
-        abort(404, 'QR code image not found');
-    }
+    $full_url = $qrCodeService->getFullUrl($qrCode);
+    $qrImage = QrCodeImageGenerationService::generateImage($full_url);
 
-    return Storage::disk('public')->response('qr-codes/' . $qrCode->shortcode . '.webp', null, [
-        'Content-Type' => 'image/webp',
-        'Content-Disposition' => 'inline; filename="' . $qrCode->shortcode . '.webp"',
-    ]);
+    return response($qrImage->getString(), 200)
+        ->header('Content-Type', $qrImage->getMimeType())
+        ->header('Content-Disposition', 'inline; filename="qrcode.webp"');
 });
 
 Route::get('/qr/{shortcode}/image/download', function (QrCodeService $qrCodeService, string $shortcode) {
@@ -44,11 +41,12 @@ Route::get('/qr/{shortcode}/image/download', function (QrCodeService $qrCodeServ
         abort(404, 'QR code not found');
     }
 
-    if(Storage::disk('public')->missing('qr-codes/' . $qrCode->shortcode . '.webp')) {
-        abort(404, 'QR code image not found');
-    }
+    $full_url = $qrCodeService->getFullUrl($qrCode);
+    $qrImage = QrCodeImageGenerationService::generateImage($full_url);
 
-    return Storage::disk('public')->download('qr-codes/' . $qrCode->shortcode . '.webp', $qrCode->shortcode . '.webp');
+    return response($qrImage->getString(), 200)
+        ->header('Content-Type', $qrImage->getMimeType())
+        ->header('Content-Disposition', 'attachment; filename="qrcode.webp"');
 });
 
 Route::get('/health', function() {

@@ -22,19 +22,11 @@ class QrCodeService
             throw new InvalidArgumentException('Invalid URL provided.');
         }
 
-        $qr = QrCodeModel::create([
+        return QrCodeModel::create([
             'shortcode' => self::generateUniqueShortCode(),
             'destination_url' => $url,
             'title' => $title ?? 'Untitled QR Code',
         ]);
-
-        $full_url = $this->getFullUrl($qr);
-
-        $result = $this->qrGenService->generateImage($full_url);
-        $filePath = $this->qrGenService->saveImage($result, $qr->shortcode);
-        Log::info("QR code image saved to: {$filePath}");
-
-        return $qr;
     }
 
     public function updateCode(string $shortcode, ?string $url = null, ?string $title = null): QrCodeModel
@@ -67,9 +59,6 @@ class QrCodeService
         if (!$qrCode) {
             throw new InvalidArgumentException("QR code with shortcode '{$shortcode}' not found.");
         }
-
-        // Delete QR code image
-        $this->qrGenService->deleteImage($qrCode->shortcode);
 
         return $qrCode->delete();
     }

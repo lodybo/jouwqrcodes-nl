@@ -2,19 +2,23 @@
 
 namespace App\Services;
 
-use App\Models\QrCodeModel;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\Result\ResultInterface;
 use Endroid\QrCode\Writer\WebPWriter;
-use Illuminate\Support\Facades\Storage;
+use Endroid\QrCode\Writer\PngWriter;;
+use Endroid\QrCode\Writer\SvgWriter;
 
 class QrCodeImageGenerationService
 {
-    public static function generateImage(string $full_url): ResultInterface
+    public static function generateImage(string $full_url, string $format = 'webp'): ResultInterface
     {
-        $writer = new WebPWriter();
+        $writer = match($format) {
+            'png' => new PngWriter(),
+            'svg' => new SvgWriter(),
+            default => new WebPWriter(),
+        };
 
         $qrcode = new QrCode(
             data: $full_url,
@@ -26,21 +30,5 @@ class QrCodeImageGenerationService
         );
 
         return $writer->write($qrcode);
-    }
-
-    public static function saveImage(ResultInterface $qrCode, string $shortCode): string
-    {
-        $filePath = storage_path("app/public/qr-codes/$shortCode.webp");
-        $qrCode->saveToFile($filePath);
-        return $filePath;
-    }
-
-    public static function deleteImage(string $shortCode): bool
-    {
-        if (Storage::disk('public')->exists("qr-codes/$shortCode.webp")) {
-            return Storage::disk('public')->delete("qr-codes/$shortCode.webp");
-        }
-
-        return false;
     }
 }
