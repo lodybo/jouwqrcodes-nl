@@ -2,6 +2,7 @@
 
 use App\Models\QrCodeModel;
 use App\Services\QrCodeService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,4 +49,13 @@ Route::get('/qr/{shortcode}/image/download', function (QrCodeService $qrCodeServ
     }
 
     return Storage::disk('public')->download('qr-codes/' . $qrCode->shortcode . '.webp', $qrCode->shortcode . '.webp');
+});
+
+Route::get('/health', function() {
+    try {
+        DB::connection()->getPdo(); // Check DB
+        return response()->json(['status' => 'healthy'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'unhealthy'], 503);
+    }
 });

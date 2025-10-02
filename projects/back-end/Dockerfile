@@ -12,9 +12,13 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libxml2-dev \
     nginx \
-    supervisor
+    supervisor \
+    libwebp-dev \
+    libjpeg-turbo-dev \
+    freetype-dev
 
 # Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
 # Install Composer

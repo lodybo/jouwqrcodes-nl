@@ -3,4 +3,4 @@ name: jouwqrcodes-backend
 description: A Helm chart for deploying JouwQR Codes Backend API
 type: application
 version: 0.1.0
-appVersion: "<VERSION>"
+appVersion: "0.1.0"
