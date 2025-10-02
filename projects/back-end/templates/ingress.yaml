@@ -42,19 +42,12 @@ metadata:
   labels: {{ toYaml .Values.app.labels | nindent 4 }}
     environment: {{ .Values.environment }}
   annotations:
-    {{- if eq .Values.environment "production" }}
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.app.domains.production }}
-    {{- else if eq .Values.environment "development" }}
-    external-dns.alpha.kubernetes.io/hostname: {{ .Values.app.domains.development }}
-    {{- end }}
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-https-redirect@kubernetescrd
-    traefik.ingress.kubernetes.io/router.priority: "1"
     cert-manager.io/cluster-issuer: letsencrypt-http-issuer
 spec:
   rules:
-    {{- if eq .Values.environment "production" }}
     - host: {{ .Values.app.domains.production }}
       http:
         paths:
@@ -65,8 +58,7 @@ spec:
                 name: {{ .Values.service.name }}
                 port:
                   number: {{ .Values.service.port }}
-    {{- else if eq .Values.environment "development" }}
-    - host: {{ .Values.app.domains.development }}
+    - host: www.{{ .Values.app.domains.production }}
       http:
         paths:
           - path: /
@@ -76,14 +68,8 @@ spec:
                 name: {{ .Values.service.name }}
                 port:
                   number: {{ .Values.service.port }}
-    {{- end }}
   tls:
-    {{- if eq .Values.environment "production" }}
     - secretName: {{ .Values.app.domains.production }}-cert
       hosts:
         - {{ .Values.app.domains.production }}
-    {{- else if eq .Values.environment "development" }}
-    - secretName: {{ .Values.app.domains.development }}-cert
-      hosts:
-        - {{ .Values.app.domains.development }}
-    {{- end }}
+        - www.{{ .Values.app.domains.production }}
