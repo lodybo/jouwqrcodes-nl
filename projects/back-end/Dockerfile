@@ -29,11 +29,9 @@ COPY . .
 # Install dependencies (skip dev dependencies in production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Configure PHP-FPM
-RUN sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's/;listen.owner = www-data/listen.owner = www-data/g' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's/;listen.group = www-data/listen.group = www-data/g' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's/;listen.mode = 0660/listen.mode = 0660/g' /usr/local/etc/php-fpm.d/www.conf
+# Configure PHP-FPM - use TCP instead of socket
+RUN echo "[www]" > /usr/local/etc/php-fpm.d/zz-docker.conf && \
+    echo "listen = 127.0.0.1:9000" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # Configure Nginx
 COPY <<'EOF' /etc/nginx/http.d/default.conf
@@ -49,7 +47,7 @@ server {
     }
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php-fpm.sock;
+        fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
