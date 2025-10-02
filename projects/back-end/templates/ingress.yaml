@@ -73,3 +73,35 @@ spec:
       hosts:
         - {{ .Values.app.domains.production }}
         - www.{{ .Values.app.domains.production }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.name }}-ingress-http
+  namespace: {{ .Values.app.namespace }}
+  labels: {{ toYaml .Values.app.labels | nindent 4 }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.app.namespace }}-{{ .Values.app.name }}-https-redirect@kubernetescrd
+spec:
+  rules:
+    - host: {{ .Values.app.domains.production }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  number: {{ .Values.service.port }}
+    - host: www.{{ .Values.app.domains.production }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  number: {{ .Values.service.port }}
