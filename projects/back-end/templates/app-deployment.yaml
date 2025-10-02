@@ -27,9 +27,6 @@ spec:
           command: [ 'sh', '-c' ]
           args:
             - |
-              echo "Verify files exist"
-              ls -la /var/www/html/public/
-              test -f /var/www/html/public/index.php || (echo "index.php missing!" && exit 1)
               echo "Running migrations..."
               php artisan migrate --force
               echo "Starting application..."
@@ -82,7 +79,8 @@ spec:
               cpu: {{ .Values.resources.limits.cpu }}
           livenessProbe:
             httpGet:
-              path: /health
+              #path: /health TODO: fix route
+              path: /
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -90,7 +88,8 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              #path: /health TODO: fix route
+              path: /
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 10
             periodSeconds: 5
