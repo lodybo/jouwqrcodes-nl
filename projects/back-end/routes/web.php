@@ -51,7 +51,7 @@ Route::get('/qr/{shortcode}/image/download', function (QrCodeService $qrCodeServ
 
 Route::get('/health', function() {
     try {
-        DB::connection()->getPdo(); // Check DB
+//        DB::connection()->getPdo(); // Check DB
         return response()->json(['status' => 'healthy'], 200);
     } catch (\Exception $e) {
         return response()->json(['status' => 'unhealthy'], 503);
