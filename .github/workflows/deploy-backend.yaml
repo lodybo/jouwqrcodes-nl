@@ -132,7 +132,7 @@ jobs:
           --values "$RUNNER_TEMP/secret-values.json"
           --set-string "app.image.tag=${{ needs.docker.outputs.tag }}"
           --set "environment=production"
-          --atomic --wait --timeout 5m
+          --rollback-on-failure --wait --timeout 5m
 
       - name: Remove secret values file
         if: always()
