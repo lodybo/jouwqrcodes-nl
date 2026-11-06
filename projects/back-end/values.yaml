@@ -21,7 +21,7 @@ environment: development # or: production
 resources:
   requests:
     cpu: 50m
-    memory: 256Mi
+    memory: 128Mi
   limits:
     cpu: 200m
     memory: 512Mi
