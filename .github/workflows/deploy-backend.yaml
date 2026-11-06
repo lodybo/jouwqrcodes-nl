@@ -8,11 +8,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/dvg-backend
+  IMAGE_NAME: ${{ github.repository_owner }}/jouwqrcodes-backend
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   actions: write
@@ -20,9 +19,11 @@ permissions:
   packages: write
 
 jobs:
-  deploy-backend:
-    name: Deploy back-end
+  docker:
+    name: Build and push Docker image
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.deploy-tag.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -32,19 +33,24 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.JQRC_PUSH_TOKEN }}
 
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # backend-v1.2.3        -> 1.2.3 + latest
+          # backend-v1.2.3-beta.1 -> 1.2.3-beta.1 + beta
           tags: |
-            type=ref,event=tag
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=match,pattern=backend-v\d+\.\d+\.\d+-beta\.\d+,value=beta
+            type=match,pattern=backend-v(\d+\.\d+\.\d+(-beta\.\d+)?),group=1
+            type=raw,value=latest,enable=${{ !contains(github.ref_name, '-beta') }}
+            type=raw,value=beta,enable=${{ contains(github.ref_name, '-beta') }}
+
+      - name: Extract deploy image tag
+        id: deploy-tag
+        run: |
+          echo "tag=${GITHUB_REF_NAME#backend-v}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,9 +58,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/back-end
-          file: ./apps/back-end/Dockerfile
-          no-cache: true
+          context: ./projects/back-end
+          file: ./projects/back-end/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -67,3 +72,68 @@ jobs:
           echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Image**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Tags**: \`${{ steps.meta.outputs.tags }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy Tag**: \`${{ steps.deploy-tag.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: docker
+    # Beta tags are meant for the dev cluster (not wired up yet), never prod
+    if: ${{ !contains(github.ref_name, '-no-deploy') && !contains(github.ref_name, '-beta') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 spindraad-app-cluster
+
+      - name: Set Helm chart appVersion from tag
+        run: |
+          VERSION="${{ needs.docker.outputs.tag }}"
+          sed -i "s/^appVersion: .*/appVersion: \"${VERSION}\"/" projects/back-end/Chart.yaml
+
+      - name: ⚗️ Extract namespace from values.yaml
+        uses: mikefarah/yq@v4.44.2
+        id: namespace
+        with:
+          cmd: "yq .app.namespace projects/back-end/values.yaml"
+
+      # Secrets go through a values file instead of --set, so commas or other
+      # special characters in them can't break Helm's --set parsing.
+      - name: Write secret values file
+        env:
+          APP_KEY: ${{ secrets.APP_KEY }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PULL_TOKEN: ${{ secrets.JQRC_PULL_TOKEN }}
+        run: |
+          jq -n \
+            --arg appKey "$APP_KEY" \
+            --arg pgPassword "$POSTGRES_PASSWORD" \
+            --arg pullToken "$PULL_TOKEN" \
+            '{secrets: {appKey: $appKey}, postgres: {password: $pgPassword}, imagePullSecret: {password: $pullToken}}' \
+            > "$RUNNER_TEMP/secret-values.json"
+
+      - name: Deploy to cluster
+        run: >
+          helm upgrade --install
+          jouwqrcodes-backend projects/back-end
+          --create-namespace
+          --namespace "${{ steps.namespace.outputs.result }}"
+          --values "$RUNNER_TEMP/secret-values.json"
+          --set-string "app.image.tag=${{ needs.docker.outputs.tag }}"
+          --set "environment=production"
+          --atomic --wait --timeout 5m
+
+      - name: Remove secret values file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/secret-values.json"
