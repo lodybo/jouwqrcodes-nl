@@ -98,8 +98,10 @@ EOF
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Clear and cache configurations
-RUN php artisan optimize:clear
+# Clear any cached bootstrap files copied in from the build context.
+# No database exists at build time, so use the in-memory cache store for this
+# step only. The runtime CACHE_STORE (set in the Helm chart) is unaffected.
+RUN CACHE_STORE=array php artisan optimize:clear
 
 # Create log directories
 RUN mkdir -p /var/log/supervisor
