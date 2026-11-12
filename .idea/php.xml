@@ -139,9 +139,41 @@
       <path value="$PROJECT_DIR$/projects/back-end/vendor/dasprid/enum" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/bacon/bacon-qr-code" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/endroid/qr-code" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/league/uri-components" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/league/csv" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/danharrin/date-format-converter" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/danharrin/livewire-rate-limiting" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/chillerlan/php-qrcode" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/chillerlan/php-settings-container" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/ryangjchandler/blade-capture-directive" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/support" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/filament" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/query-builder" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/actions" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/widgets" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/notifications" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/anourvalar/eloquent-serialize" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/forms" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/tables" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/schemas" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/filament/infolists" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/nette/php-generator" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/ueberdosis/tiptap-php" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/symfony/html-sanitizer" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/pragmarx/google2fa-qrcode" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/pragmarx/google2fa" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/livewire/livewire" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/kirschbaum-development/eloquent-power-joins" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/scrivo/highlight.php" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/spatie/laravel-package-tools" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/spatie/invade" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/spatie/shiki-php" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/openspout/openspout" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/blade-ui-kit/blade-icons" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/blade-ui-kit/blade-heroicons" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="f19980e0-73ab-41a2-8b8b-ea414425faa7" timeout="60000" />
@@ -149,6 +181,11 @@
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/projects/back-end/phpunit.xml" custom_loader_path="$PROJECT_DIR$/projects/back-end/vendor/autoload.php" use_configuration_file="true" />
+    </phpunit_settings>
   </component>
   <component name="Psalm">
     <Psalm_settings>
