@@ -172,6 +172,7 @@
       <path value="$PROJECT_DIR$/projects/back-end/vendor/openspout/openspout" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/blade-ui-kit/blade-icons" />
       <path value="$PROJECT_DIR$/projects/back-end/vendor/blade-ui-kit/blade-heroicons" />
+      <path value="$PROJECT_DIR$/projects/back-end/vendor/symfony/polyfill-time" />
     </include_path>
   </component>
   <component name="PhpStan">
